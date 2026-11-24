@@ -4060,3 +4060,17 @@ define Device/zyxel_wsm20
   KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb | znet-header V1.00(ABZF.0)C0
 endef
 TARGET_DEVICES += zyxel_wsm20
+
+define Device/wavlink_wl-wn531ax2
+$(Device/dsa-migration)
+DEVICE_VENDOR := Wavlink
+DEVICE_MODEL := WL-WN531AX2
+DEVICE_PACKAGES += kmod-usb3 kmod-mt7915-firmware
+IMAGE_SIZE := 15040k
+KERNEL_LOADADDR := 0x82000000
+KERNEL := kernel-bin | relocate-kernel $(loadaddr-y) | lzma | \
+fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(BLOCKSIZE) | \
+append-rootfs | pad-rootfs | check-size | append-metadata
+endef
+TARGET_DEVICES += wavlink_wl-wn531ax2
